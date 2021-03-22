@@ -1,78 +1,48 @@
 #include "cbl.h"
-#include <math.h>
-#include <string.h>
 
-int hex_chr_to_int(char c)
+uint8_t hex_nibble(char c)
 {
     if (c >= 'A' && c <= 'F')
-        c = chr_to_lower(c);
+        c = c | 0x20;
     
     return ((c >= '0' && c <= '9') ? (c & 0xF) : (c >= 'a' && c <= 'f') ? (10 + (c - 'a')) : 0);
 }
 
-char int_to_hex_chr(int n)
-{    
-    return ((n < 10) ? (n + '0') : (n >= 10 && n <= 15) ? (((n - 10) + 'a')) : 0);
-}
-
-int hex_to_int(char *str, size_t size)
+uint8_t hex_encode(char *str, char *output, size_t output_size)
 {
-    int to_dec = 0, count = 0, i = 0;
-
-    for (i = size - 1; i >= 0; i--)
-        to_dec += hex_chr_to_int(str[i]) * pow(16, count++);
-
-    return (to_dec);
-}
-
-uint8_t int_to_hex(int n, char *buffer, size_t size)
-{
-    if (!buffer)
+    if ((string_len(str) << 1) > output_size)
         return (1);
     
-    for (int i = 0; i < size && n; i++) {
-        buffer[i] = int_to_hex_chr((n % 16));
-        n /= 16;
+    while (*str) {
+
+        *(output)++ = BASE16_TABLE[*str >> 4];
+        *(output)++ = BASE16_TABLE[*str & 0xF];
+        
+        str++;
     }
 
-    strrev(buffer);
-
+    *output = 0;
+    
     return (0);
 }
 
-
-uint8_t encode_hex(char *str, char *output, size_t size_output)
+uint8_t hex_decode(char *str, char *output, size_t output_size)
 {
-    char tmp[0x10] = {0};
-
+    if ((string_len(str) >> 1) > output_size)
+        return (1);
+    
     while (*str) {
         
-        if (int_to_hex(*(str)++, tmp, 0x10))
-            return (1);
+        *output = hex_nibble(*(str)++);
         
-        strncat(output, tmp, size_output);
-    }
-
-    return (0);
-}
-
-uint8_t decode_hex(char *str, char *output, size_t size_output)
-{
-    char tmp = 0;
-    char *origin = str;
-
-    while (*str) {
+        *output <<= 4;
         
-        str += 2;
-        tmp = *str;
-        *str = 0;
+        *output += hex_nibble(*(str)++);
         
-        *output = hex_to_int(origin, 2);
         output++;
-
-        *str = tmp;
-        origin = str;
     }
+
+    *output = 0;
 
     return (0);
 }
