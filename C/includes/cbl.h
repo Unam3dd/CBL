@@ -10,14 +10,14 @@ char chr_to_lower(char c);
 char chr_to_upper(char c);
 int reverse_integer(int n);
 void convert_letter_in_upper(char *str);
+size_t string_len(char *str);
 
 // base16.c
-int hex_chr_to_int(char c);
-char int_to_hex_chr(int n);
-int hex_to_int(char *str, size_t size);
-uint8_t int_to_hex(int n, char *buffer, size_t size);
-uint8_t encode_hex(char *str, char *output, size_t size_output);
-uint8_t decode_hex(char *str, char *output, size_t size_output);
+static char BASE16_TABLE[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+uint8_t hex_nibble(char c);
+uint8_t hex_encode(char *str, char *output, size_t output_size);
+uint8_t hex_decode(char *str, char *output, size_t output_size);
+
 
 // base32.c
 static char BASE32_TABLE[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
