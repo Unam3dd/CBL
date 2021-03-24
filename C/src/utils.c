@@ -81,3 +81,13 @@ void convert_letter_in_upper(char *str)
         str++;
     }
 }
+
+size_t string_len(char *str)
+{
+    size_t size = 0;
+    
+    while (*(str)++)
+        size++;
+    
+    return (size);
+}
